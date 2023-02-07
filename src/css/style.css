@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Signika:wght@300;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap');
+
+:root {
+    --black: #0e0e0e;
+    --white: #f3f3f3;
+    --gray: #a1a1a1;
+    --mortar: #515151;
+    --yellow: #ffee32;
+    --bee: #ffd100;
+    --paperlight: #f2ede3;
+    --paperdark:#ebe3d6;
+    --backgnd: var(--white);
+    --foregnd: var(--black);
+    --font: 'Signika';
+    --highlight: rgb(0, 238, 255);
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    font-family: var(--font), sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    outline: none;
+    letter-spacing: 1px;
+    /*To remove on tap blue color && select*/
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+h1,h2,h3{
+  font-family: 'Libre Baskerville', serif;
+}
+body{
+  background-color: var(--black);
+  color: var(--foregnd);
+  /* display: flex;
+  flex-direction: column; */
+  z-index: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+#canvas{
+display: block;
+position: fixed;
+z-index: 1;
+top: 0%;
+right: 0%;
+width: 10vw;
+height: 10vh;
+/*To remove on tap blue color && select*/
+-webkit-tap-highlight-color: transparent;
+-webkit-touch-callout: none;
+-webkit-user-select: none;
+-khtml-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+touch-action: none;
+}
