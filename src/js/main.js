@@ -26,46 +26,8 @@ function init() {
     stats = new Stats();
     document.querySelector('#stats').appendChild( stats.dom );
     scene = new THREE.Scene();
-
-    // LOADING SCREEN
-    const overlayGeo= new THREE.PlaneBufferGeometry(2,2,1,1);
-    const overlayMat= new THREE.ShaderMaterial({
-        transparent:true,
-        uniforms:{
-            uAlpha: { value: 1.0 }
-        },
-        vertexShader:`
-            void main(){
-                gl_Position = vec4(position , 1.0);
-            }
-        `,
-        fragmentShader:`
-            uniform float uAlpha;
-            void main(){
-                gl_FragColor =vec4(0.0,0.0,0.0,uAlpha);
-            }
-        `,
-    })
-
-    const overlay= new THREE.Mesh(overlayGeo,overlayMat)
-    // scene.add(overlay)
-    const loadingManager= new THREE.LoadingManager(
-        // Loaded
-        ()=>{
-            
-            console.log('Loaded')
-        },
-        // Progress
-        (url, itemsLoaded, itemsTotal)=>{
-            console.log(itemsLoaded/itemsTotal)
-        },
-        // Error
-        ()=>{
-
-        }
-    )
+    scene.background = new THREE.Color(0xfefefe);
     
-
     // ***** CAMERA ****** //
     const fov = 45;
     const aspect = window.innerWidth / window.innerHeight;  // the canvas default

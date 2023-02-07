@@ -45,6 +45,8 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
+    "@theatre/core": "^0.6.0",
+    "@theatre/studio": "^0.6.0",
     "babel-preset-es2015": "^6.24.1",
     "clean-webpack-plugin": "^4.0.0"
   }
