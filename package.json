@@ -9,6 +9,8 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@theatre/core": "^0.6.0",
+    "@theatre/studio": "^0.6.0",
     "@types/three": "^0.141.0",
     "three": "^0.142.0",
     "typescript": "^4.5.4"

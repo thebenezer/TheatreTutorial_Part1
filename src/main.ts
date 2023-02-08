@@ -1,110 +1,145 @@
-import './style.css'
-import * as THREE from 'three'
+import './style.css';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-/**
- * Camera
- */
+import { getProject, types } from '@theatre/core';
+import studio from '@theatre/studio';
+studio.initialize();
 
-const camera = new THREE.PerspectiveCamera(
-  70,
-  window.innerWidth / window.innerHeight,
-  10,
-  200,
-)
+// Create a project for the animation
+const project = getProject('TheatreTutorial_1');
 
-camera.position.z = 50
+// Create a sheet
+const sheet = project.sheet('AnimationScene');
 
-/**
- * Scene
- */
+let controls: OrbitControls;
+let camera: THREE.PerspectiveCamera;
+let renderer: THREE.WebGLRenderer;
+let scene: THREE.Scene;
 
-const scene = new THREE.Scene()
+init();
+requestAnimationFrame(tick);
 
-/*
- * TorusKnot
- */
-const geometry = new THREE.TorusKnotGeometry(10, 3, 300, 16)
-const material = new THREE.MeshStandardMaterial({color: '#f00'})
-material.color = new THREE.Color('#049ef4')
-material.roughness = 0.5
+function init() {
+  // Camera
+  camera = new THREE.PerspectiveCamera(
+    70,
+    window.innerWidth / window.innerHeight,
+    10,
+    200,
+  );
+  camera.position.set(40, 10, 40);
 
-const mesh = new THREE.Mesh(geometry, material)
-mesh.castShadow = true
-mesh.receiveShadow = true
-scene.add(mesh)
+  // Scene
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x292929);
 
-/*
- * Lights
- */
+  // Renderer
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.autoUpdate = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.render(scene, camera);
+  document.body.appendChild(renderer.domElement);
 
-// Ambient Light
-const ambientLight = new THREE.AmbientLight('#ffffff', 0.5)
-scene.add(ambientLight)
+  setupLights();
+  setupOrbitControls();
+  setupEventListeners();
 
-// Point light
-const directionalLight = new THREE.DirectionalLight('#ff0000', 30 /* , 0, 1 */)
-directionalLight.position.y = 20
-directionalLight.position.z = 20
+  // ***** setup our scene *******
 
-directionalLight.castShadow = true
+  // Box
+  const geometry = new THREE.BoxGeometry(10, 10, 10);
+  const material = new THREE.MeshPhongMaterial({ color: 0x049ef4 });
 
-directionalLight.shadow.mapSize.width = 2048
-directionalLight.shadow.mapSize.height = 2048
-directionalLight.shadow.camera.far = 50
-directionalLight.shadow.camera.near = 1
-directionalLight.shadow.camera.top = 20
-directionalLight.shadow.camera.right = 20
-directionalLight.shadow.camera.bottom = -20
-directionalLight.shadow.camera.left = -20
+  const box = new THREE.Mesh(geometry, material);
+  box.castShadow = true;
+  box.receiveShadow = true;
+  scene.add(box);
 
-scene.add(directionalLight)
+  const planeGeometry = new THREE.CircleGeometry(30, 50);
+  const planeMaterial = new THREE.MeshPhongMaterial({ color: 0xf0f0f0 });
 
-// RectAreaLight
-const rectAreaLight = new THREE.RectAreaLight('#ff0', 1, 50, 50)
+  const floor = new THREE.Mesh(planeGeometry, planeMaterial);
+  floor.rotateX(-Math.PI / 2);
+  floor.receiveShadow = true;
+  scene.add(floor);
 
-rectAreaLight.position.z = 10
-rectAreaLight.position.y = -40
-rectAreaLight.position.x = -20
-rectAreaLight.lookAt(new THREE.Vector3(0, 0, 0))
+  // ***** Theatre Config *******
 
-scene.add(rectAreaLight)
+  const boxObj = sheet.object('Box', {
+    rotation: types.compound({
+      xR: types.number(box.rotation.x, { range: [-Math.PI, Math.PI] }),
+      yR: types.number(box.rotation.y, { range: [-Math.PI, Math.PI] }),
+      zR: types.number(box.rotation.z, { range: [-Math.PI, Math.PI] }),
+    }),
+    position: types.compound({
+      x: types.number(0, { nudgeMultiplier: 0.1 }),
+      y: types.number(0, { nudgeMultiplier: 0.1 }),
+      z: types.number(0, { nudgeMultiplier: 0.1 }),
+    }),
+  });
 
-/**
- * Renderer
- */
+  boxObj.onValuesChange((values) => {
+    const { xR, yR, zR } = values.rotation;
+    box.rotation.set(xR, yR, zR);
+    const { x, y, z } = values.position;
+    box.position.set(x, y, z);
+  });
 
-const renderer = new THREE.WebGLRenderer({antialias: true})
-
-renderer.shadowMap.enabled = true
-renderer.shadowMap.type = THREE.PCFSoftShadowMap
-renderer.setSize(window.innerWidth, window.innerHeight)
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-renderer.render(scene, camera)
-
-document.body.appendChild(renderer.domElement)
-
-/**
- * Update the screen
- */
-function tick(): void {
-  renderer.render(scene, camera)
-
-  window.requestAnimationFrame(tick)
 }
 
-tick()
+// RAF Update the screen
+function tick(): void {
+  renderer.render(scene, camera);
+  controls.update();
+  window.requestAnimationFrame(tick);
+}
 
-/**
- * Handle `resize` events
- */
-window.addEventListener(
-  'resize',
-  function () {
-    camera.aspect = window.innerWidth / window.innerHeight
-    camera.updateProjectionMatrix()
 
-    renderer.setSize(window.innerWidth, window.innerHeight)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-  },
-  false,
-)
+function setupLights() {
+  // ***** Lights ****** //
+  const ambLight = new THREE.AmbientLight(0xfefefe, 0.2);
+  const dirLight = new THREE.DirectionalLight(0xfefefe, 1);
+  dirLight.castShadow = true;
+  dirLight.shadow.mapSize.width = 1024;
+  dirLight.shadow.mapSize.height = 1024;
+  dirLight.shadow.camera.far = 100;
+  dirLight.shadow.camera.near = 1;
+  dirLight.shadow.camera.top = 40;
+  dirLight.shadow.camera.right = 40;
+  dirLight.shadow.camera.bottom = -40;
+  dirLight.shadow.camera.left = -40;
+
+  dirLight.position.set(20, 30, 20);
+  scene.add(ambLight, dirLight);
+}
+
+function setupOrbitControls() {
+  // OrbitControls
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableZoom = true;
+  controls.enableDamping = true;
+  controls.autoRotate = true;
+  controls.rotateSpeed = 1;
+  controls.dampingFactor = 0.1;
+  controls.minDistance = 2.4;
+
+}
+
+function setupEventListeners() {
+  // Handle `resize` events
+  window.addEventListener(
+    'resize',
+    function () {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    },
+    false,
+  );
+}
