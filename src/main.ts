@@ -2,13 +2,21 @@ import './style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-import { getProject, types } from '@theatre/core';
+import { getProject, types, val } from '@theatre/core';
+import projectState from './TheatreTutorial_1.theatre-project-state.json'
+
 import studio from '@theatre/studio';
-studio.initialize();
 
-// Create a project for the animation
-const project = getProject('TheatreTutorial_1');
-
+let project;
+if (import.meta.env.DEV) {
+  studio.initialize()
+  // Create a project from local state
+  project = getProject('TheatreTutorial_1');
+}
+else{
+  // Create a project from saved state
+  project = getProject('TheatreTutorial_1',{state:projectState});
+}
 // Create a sheet
 const sheet = project.sheet('AnimationScene');
 
@@ -26,9 +34,9 @@ function init() {
     70,
     window.innerWidth / window.innerHeight,
     10,
-    200,
+    300,
   );
-  camera.position.set(40, 10, 40);
+  camera.position.set(-70, 20, 70);
 
   // Scene
   scene = new THREE.Scene();
@@ -43,6 +51,10 @@ function init() {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.render(scene, camera);
   document.body.appendChild(renderer.domElement);
+
+  // Fog
+
+  scene.fog = new THREE.FogExp2(0x292929,0.007)
 
   setupLights();
   setupOrbitControls();
@@ -59,11 +71,11 @@ function init() {
   box.receiveShadow = true;
   scene.add(box);
 
-  const planeGeometry = new THREE.CircleGeometry(30, 50);
-  const planeMaterial = new THREE.MeshPhongMaterial({ color: 0xf0f0f0 });
+  const planeGeometry = new THREE.CylinderGeometry(30, 30,200,30);
+  const planeMaterial = new THREE.MeshPhongMaterial({ color: 0xf0f0f0  });
 
   const floor = new THREE.Mesh(planeGeometry, planeMaterial);
-  floor.rotateX(-Math.PI / 2);
+  floor.position.set(0,-100,0)
   floor.receiveShadow = true;
   scene.add(floor);
 
@@ -80,6 +92,11 @@ function init() {
       y: types.number(0, { nudgeMultiplier: 0.1 }),
       z: types.number(0, { nudgeMultiplier: 0.1 }),
     }),
+    scale: types.compound({
+      xS: types.number(1, { nudgeMultiplier: 0.1 }),
+      yS: types.number(1, { nudgeMultiplier: 0.1 }),
+      zS: types.number(1, { nudgeMultiplier: 0.1 }),
+    }),
   });
 
   boxObj.onValuesChange((values) => {
@@ -87,6 +104,8 @@ function init() {
     box.rotation.set(xR, yR, zR);
     const { x, y, z } = values.position;
     box.position.set(x, y, z);
+    const { xS, yS, zS } = values.scale;
+    box.scale.set(xS, yS, zS);
   });
 
 }
@@ -101,7 +120,7 @@ function tick(): void {
 
 function setupLights() {
   // ***** Lights ****** //
-  const ambLight = new THREE.AmbientLight(0xfefefe, 0.2);
+  const ambLight = new THREE.AmbientLight(0xfefefe, 0.5);
   const dirLight = new THREE.DirectionalLight(0xfefefe, 1);
   dirLight.castShadow = true;
   dirLight.shadow.mapSize.width = 1024;
@@ -122,11 +141,12 @@ function setupOrbitControls() {
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableZoom = true;
   controls.enableDamping = true;
-  controls.autoRotate = true;
+  controls.autoRotate = false;
   controls.rotateSpeed = 1;
   controls.dampingFactor = 0.1;
   controls.minDistance = 2.4;
-
+  controls.maxDistance = 180;
+  controls.maxPolarAngle = (Math.PI/2)
 }
 
 function setupEventListeners() {
@@ -139,6 +159,19 @@ function setupEventListeners() {
 
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    },
+    false,
+  );
+  // Play sequence on click
+  window.addEventListener(
+    'click',
+    function () {
+      if(!val(sheet.sequence.pointer.playing)){
+        sheet.sequence.play({iterationCount:Infinity,range:[0,2]})
+      }
+      // else{
+      //   sheet.sequence.pause();
+      // }
     },
     false,
   );
