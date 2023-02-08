@@ -6,13 +6,20 @@ Youtube: Theatre.js tutorial
 Download [Node.js](https://nodejs.org/en/download/).
 Run this followed commands:
 
+## Scripts
+- Install dependencies (only the first time)
 ``` bash
-# Install dependencies (only the first time)
-npm install
+yarn install
+```
 
-# Run the local server at localhost:8080
-npm run dev
+- Start the dev server:
 
-# Build for production in the build/ directory
-npm run build
+``` bash
+yarn run dev
+```
+
+- Build for production:
+
+``` bash
+yarn run build
 ```
