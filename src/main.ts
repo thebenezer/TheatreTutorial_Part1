@@ -3,19 +3,19 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 import { getProject, types, val } from '@theatre/core';
-import projectState from './TheatreTutorial_1.theatre-project-state.json'
+import projectState from './TheatreTutorial_1.theatre-project-state.json';
 
 import studio from '@theatre/studio';
 
 let project;
 if (import.meta.env.DEV) {
-  studio.initialize()
+  studio.initialize();
   // Create a project from local state
   project = getProject('TheatreTutorial_1');
 }
-else{
+else {
   // Create a project from saved state
-  project = getProject('TheatreTutorial_1',{state:projectState});
+  project = getProject('TheatreTutorial_1', { state: projectState });
 }
 // Create a sheet
 const sheet = project.sheet('AnimationScene');
@@ -54,7 +54,7 @@ function init() {
 
   // Fog
 
-  scene.fog = new THREE.FogExp2(0x292929,0.007)
+  scene.fog = new THREE.FogExp2(0x292929, 0.007);
 
   setupLights();
   setupOrbitControls();
@@ -71,11 +71,11 @@ function init() {
   box.receiveShadow = true;
   scene.add(box);
 
-  const planeGeometry = new THREE.CylinderGeometry(30, 30,200,30);
-  const planeMaterial = new THREE.MeshPhongMaterial({ color: 0xf0f0f0  });
+  const planeGeometry = new THREE.CylinderGeometry(30, 30, 300, 30);
+  const planeMaterial = new THREE.MeshPhongMaterial({ color: 0xf0f0f0 });
 
   const floor = new THREE.Mesh(planeGeometry, planeMaterial);
-  floor.position.set(0,-100,0)
+  floor.position.set(0, -150, 0);
   floor.receiveShadow = true;
   scene.add(floor);
 
@@ -146,7 +146,8 @@ function setupOrbitControls() {
   controls.dampingFactor = 0.1;
   controls.minDistance = 2.4;
   controls.maxDistance = 180;
-  controls.maxPolarAngle = (Math.PI/2)
+  controls.target.set(0, 20, 0);
+  controls.maxPolarAngle = (Math.PI / 2);
 }
 
 function setupEventListeners() {
@@ -166,13 +167,56 @@ function setupEventListeners() {
   window.addEventListener(
     'click',
     function () {
-      if(!val(sheet.sequence.pointer.playing)){
-        sheet.sequence.play({iterationCount:Infinity,range:[0,2]})
+      if (!val(sheet.sequence.pointer.playing)) {
+        const tapStart = document.getElementById('tapStart');
+        // @ts-ignore
+        tapStart.style.opacity = "0";
+        this.setTimeout(()=>{
+          // @ts-ignore
+          tapStart.style.display = "none";
+        },400)
+        sheet.sequence.play({ iterationCount: Infinity, range: [0, 2] });
       }
-      // else{
-      //   sheet.sequence.pause();
-      // }
     },
-    false,
+    {
+      once:true
+    }
   );
+
+  const toggleSoundDom = document.getElementById('toggleSound');
+  // @ts-ignore
+  toggleSoundDom.addEventListener('click',()=>{toggleSound()},false)
+
+  const toggleAnimationDom = document.getElementById('toggleAnimation');
+  // @ts-ignore
+  toggleAnimationDom.addEventListener('click',()=>{toggleAnimation()},false)
+
+}
+
+function toggleSound() {
+  const soundOn = document.getElementById('soundOn');
+  const soundOff = document.getElementById('soundOff');
+  if (!soundOn || !soundOff) return;
+  if (soundOn.style.display == 'none') {
+    soundOn.style.display = 'block';
+    soundOff.style.display = 'none';
+  } else {
+    soundOn.style.display = 'none';
+    soundOff.style.display = 'block';
+  }
+}
+
+function toggleAnimation() {
+  const play = document.getElementById('play');
+  const pause = document.getElementById('pause');
+  if (!play || !pause) return;
+  if (!val(sheet.sequence.pointer.playing)) {
+    play.style.display = 'none';
+    pause.style.display = 'block';
+    sheet.sequence.play({ iterationCount: Infinity, range: [0, 2] });
+  } else {
+    play.style.display = 'block';
+    pause.style.display = 'none';
+    sheet.sequence.pause();
+  }
 }
