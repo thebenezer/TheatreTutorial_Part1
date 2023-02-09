@@ -1,16 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8" />
-  <link rel="icon" href="thebenezerHex.ico" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>THREE.js x Theatre.js</title>
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="thebenezerHex.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=0"/>
+    <title>TheatreJs Tutorial 1</title>
+    <meta name="description" content="TheatreJs Beginner Tutorial: Learning the basics of theatre.js to animate a cool bouncy box.">
 
-<body>
-  <div id="app"></div>
-  <script type="module" src="/src/main.ts"></script>
-</body>
+    <meta itemprop="name" content="TheatreJs Tutorial 1">
+    <meta itemprop="description" content="TheatreJs Beginner Tutorial">
+    <!-- <meta itemprop="image" content="./social2.webp"> -->
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="TheatreJs Tutorial 1">
+    <meta name="twitter:description" content="TheatreJs Beginner Tutorial">
+    <!-- <meta name="twitter:image" content="./social2.webp"> -->
+
+    <meta property="og:site_name" content="TheatreJs Tutorial 1">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="./">
+    <meta property="og:title" content="TheatreJs Tutorial 1">
+    <meta property="og:description" content="TheatreJs Beginner Tutorial">
+    <!-- <meta property="og:image" content="./social.webp"> -->
+    <meta name="apple-mobile-web-app-title" content="TheatreJs Tutorial 1">
+    <meta name="application-name" content="TheatreJs Tutorial 1">
+  </head>
+
+  <body>
+    <h1 class="logo">Bouncy</h1>
+    <a href="https://www.youtube.com/@thebenezer" class="cta" target="_blank" rel="noopener noreferrer">Tutorial</a>
+    <ul class="socials">
+      <li>
+        <a href="https://github.com/thebenezer/TheatreTutorial_Part1" target="_blank" rel="noopener noreferrer">
+          <img alt="Github Icon" src="https://img.icons8.com/external-tal-revivo-color-tal-revivo/128/null/external-github-a-web-based-hosting-service-for-version-control-logo-color-tal-revivo.png"/>
+        </a>
+      </li>
+      <li>
+        <a href="https://twitter.com/th_ebenezer" target="_blank" rel="noopener noreferrer">
+          <img alt="Twitter Icon" src="https://img.icons8.com/external-tanah-basah-glyph-tanah-basah/128/null/external-twitter-social-media-tanah-basah-glyph-tanah-basah-2.png"/>
+        </a>
+      </li>
+    </ul>
+    <div class="enterSceneContainer" id="tapStart">
+      <p>Tap to start</p>
+    </div>
+    <div class="playbackControls">
+      <div id="toggleAnimation">
+        <button id="play">
+          <img alt="play" src="https://img.icons8.com/fluency-systems-filled/128/null/play.png"/>
+        </button>
+        <button id="pause">
+          <img alt="pause" src="https://img.icons8.com/fluency-systems-filled/128/null/pause.png"/>
+        </button>
+      </div>
+      <div id="toggleSound">
+        <button id="soundOn">
+          <img alt="soundOn" src="https://img.icons8.com/fluency-systems-filled/128/null/high-volume.png"/>
+        </button>
+        <button id="soundOff">
+          <img alt="soundOff" src="https://img.icons8.com/fluency-systems-filled/128/null/no-audio.png"/>
+        </button>
+      </div>
+    </div>
+    <!-- <div id="app"></div> -->
+    <script type="module" src="/src/main.ts"></script>
+  </body>
 
 </html>
