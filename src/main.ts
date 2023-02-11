@@ -2,7 +2,7 @@ import './style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-import { getProject, types, val } from '@theatre/core';
+import { getProject, onChange, types, val } from '@theatre/core';
 import projectState from './TheatreTutorial_1.theatre-project-state.json';
 
 import studio from '@theatre/studio';
@@ -24,6 +24,13 @@ let controls: OrbitControls;
 let camera: THREE.PerspectiveCamera;
 let renderer: THREE.WebGLRenderer;
 let scene: THREE.Scene;
+const listener = new THREE.AudioListener();
+const loader = new THREE.AudioLoader();
+let soundReady = false;
+
+const swoosh = new THREE.Audio(listener)
+const boink = new THREE.Audio(listener)
+const thud = new THREE.Audio(listener)
 
 init();
 requestAnimationFrame(tick);
@@ -59,22 +66,23 @@ function init() {
   setupLights();
   setupOrbitControls();
   setupEventListeners();
+  setupSounds();
 
   // ***** setup our scene *******
 
   // Box
   const geometry = new THREE.BoxGeometry(10, 10, 10);
-  const material = new THREE.MeshPhongMaterial({ color: 0x049ef4 });
+  const boxMaterial = new THREE.MeshPhongMaterial({ color: 0x049ef4,emissive:0xff0000 });
 
-  const box = new THREE.Mesh(geometry, material);
+  const box = new THREE.Mesh(geometry, boxMaterial);
   box.castShadow = true;
   box.receiveShadow = true;
   scene.add(box);
 
-  const planeGeometry = new THREE.CylinderGeometry(30, 30, 300, 30);
-  const planeMaterial = new THREE.MeshPhongMaterial({ color: 0xf0f0f0 });
+  const floorGeometry = new THREE.CylinderGeometry(30, 30, 300, 30);
+  const floorMaterial = new THREE.MeshPhongMaterial({ color: 0xf0f0f0 });
 
-  const floor = new THREE.Mesh(planeGeometry, planeMaterial);
+  const floor = new THREE.Mesh(floorGeometry, floorMaterial);
   floor.position.set(0, -150, 0);
   floor.receiveShadow = true;
   scene.add(floor);
@@ -99,6 +107,16 @@ function init() {
     }),
   });
 
+  const colorObj = sheet.object('Colors',{
+    backgroundColor: types.rgba(),
+    floorColor: types.rgba(),
+    boxColor: types.rgba(),
+  })
+
+  const boxEffectsObj = sheet.object('Effects',{
+    boxGlow:types.rgba()
+  })
+
   boxObj.onValuesChange((values) => {
     const { xR, yR, zR } = values.rotation;
     box.rotation.set(xR, yR, zR);
@@ -107,6 +125,39 @@ function init() {
     const { xS, yS, zS } = values.scale;
     box.scale.set(xS, yS, zS);
   });
+
+  colorObj.onValuesChange((values)=>{
+    scene.background = new THREE.Color(values.backgroundColor.toString());
+    // @ts-ignore
+    scene.fog.color = new THREE.Color(values.backgroundColor.toString());
+    floorMaterial.color.setRGB(values.floorColor.r,values.floorColor.g,values.floorColor.b)
+    boxMaterial.color.setRGB(values.boxColor.r,values.boxColor.g,values.boxColor.b)
+  })
+
+  boxEffectsObj.onValuesChange((values)=>{
+    boxMaterial.emissive.setRGB(values.boxGlow.r,values.boxGlow.g,values.boxGlow.b)
+  })
+
+  // play the audio based on pointer position
+  onChange(sheet.sequence.pointer.position, (position) => {
+    if(!soundReady)return;
+    if(position > 0.80 && position < 0.83){
+      if(!thud.isPlaying){
+        thud.play();
+      }
+    }
+    else if(position > 1.20 && position < 1.23){
+      if(!boink.isPlaying){
+        boink.play();
+      }
+    }
+    else if(position > 0.00 && position<0.03){
+      if(!swoosh.isPlaying){
+        swoosh.playbackRate= 1.7;
+        swoosh.play();
+      }
+    }
+  })
 
 }
 
@@ -117,6 +168,26 @@ function tick(): void {
   window.requestAnimationFrame(tick);
 }
 
+function setupSounds() {
+  camera.add(listener);
+
+  audioSetup(swoosh,'src/assets/sounds/little-whoosh-2-6301.mp3',1,loader)
+  audioSetup(boink,'src/assets/sounds/boink.mp3',0.2,loader)
+  audioSetup(thud,'src/assets/sounds/loud-thud-45719.mp3',0.5,loader)
+}
+
+function audioSetup(sound:THREE.Audio, url:string,volume:number,loader:THREE.AudioLoader){
+  loader.load(
+    url,
+    // onLoad callback
+    function ( audioBuffer ) {
+      // set the audio object buffer to the loaded object
+      sound.setBuffer( audioBuffer );
+      sound.setVolume(volume)
+      sound.loop=false;
+    },
+  );
+}
 
 function setupLights() {
   // ***** Lights ****** //
@@ -167,16 +238,15 @@ function setupEventListeners() {
   window.addEventListener(
     'click',
     function () {
-      if (!val(sheet.sequence.pointer.playing)) {
-        const tapStart = document.getElementById('tapStart');
+      soundReady = true;
+      const tapStart = document.getElementById('tapStart');
+      // @ts-ignore
+      tapStart.style.opacity = "0";
+      this.setTimeout(()=>{
         // @ts-ignore
-        tapStart.style.opacity = "0";
-        this.setTimeout(()=>{
-          // @ts-ignore
-          tapStart.style.display = "none";
-        },400)
-        sheet.sequence.play({ iterationCount: Infinity, range: [0, 2] });
-      }
+        tapStart.style.display = "none";
+      },400)
+      sheet.sequence.play({ iterationCount: Infinity, range: [0, 2] });
     },
     {
       once:true
@@ -197,13 +267,14 @@ function toggleSound() {
   const soundOn = document.getElementById('soundOn');
   const soundOff = document.getElementById('soundOff');
   if (!soundOn || !soundOff) return;
-  if (soundOn.style.display == 'none') {
+  if (soundReady == false) {
     soundOn.style.display = 'block';
     soundOff.style.display = 'none';
   } else {
     soundOn.style.display = 'none';
     soundOff.style.display = 'block';
   }
+  soundReady=!soundReady;
 }
 
 function toggleAnimation() {
