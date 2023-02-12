@@ -4,7 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import {CSS2DRenderer,CSS2DObject} from 'three/examples/jsm/renderers/CSS2DRenderer'
 
 import { getProject, onChange, types, val } from '@theatre/core';
-import projectState from './assets/BoinkTheatreState.json';
+import projectState from '../assets/BoinkTheatreState.json';
 
 // import studio from '@theatre/studio';
 
@@ -231,9 +231,9 @@ function tick(): void {
 function setupSounds() {
   camera.add(listener);
 
-  audioSetup(swoosh,'./src/assets/sounds/whoosh.mp3',0.3,loader)
-  audioSetup(boink,'./src/assets/sounds/boink.mp3',0.2,loader)
-  audioSetup(thud,'./src/assets/sounds/loud-thud-45719.mp3',0.5,loader)
+  audioSetup(swoosh,'/assets/sounds/whoosh.mp3',0.3,loader)
+  audioSetup(boink,'/assets/sounds/boink.mp3',0.2,loader)
+  audioSetup(thud,'/assets/sounds/loud-thud-45719.mp3',0.5,loader)
 }
 
 function audioSetup(sound:THREE.Audio, url:string,volume:number,loader:THREE.AudioLoader){

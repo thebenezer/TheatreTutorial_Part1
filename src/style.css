@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'Sassy Frass';
-  src: url('/src/assets/fonts/Sassy_Frass/SassyFrass-Regular.ttf');
+  src: url('../assets/fonts/Sassy_Frass/SassyFrass-Regular.ttf');
 }
 
 * {
