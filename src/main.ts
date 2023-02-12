@@ -200,17 +200,17 @@ function init() {
   // play the audio based on pointer position
   onChange(sheet.sequence.pointer.position, (position) => {
     if(!soundReady)return;
-    if(position > 0.80 && position < 0.83){
+    if(position > 0.79 && position < 0.83){
       if(!thud.isPlaying){
         thud.play();
       }
     }
-    else if(position > 1.20 && position < 1.23){
+    else if(position > 1.18 && position < 1.23){
       if(!boink.isPlaying){
         boink.play();
       }
     }
-    else if(position > 0.00 && position<0.03){
+    else if(position > 0.00 && position<0.04){
       if(!swoosh.isPlaying){
         swoosh.playbackRate= 1.7;
         swoosh.play();
@@ -231,9 +231,9 @@ function tick(): void {
 function setupSounds() {
   camera.add(listener);
 
-  audioSetup(swoosh,'src/assets/sounds/little-whoosh-2-6301.mp3',1,loader)
-  audioSetup(boink,'src/assets/sounds/boink.mp3',0.2,loader)
-  audioSetup(thud,'src/assets/sounds/loud-thud-45719.mp3',0.5,loader)
+  audioSetup(swoosh,'./src/assets/sounds/whoosh.mp3',0.3,loader)
+  audioSetup(boink,'./src/assets/sounds/boink.mp3',0.2,loader)
+  audioSetup(thud,'./src/assets/sounds/loud-thud-45719.mp3',0.5,loader)
 }
 
 function audioSetup(sound:THREE.Audio, url:string,volume:number,loader:THREE.AudioLoader){
