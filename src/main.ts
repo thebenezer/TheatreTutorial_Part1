@@ -231,9 +231,9 @@ function tick(): void {
 function setupSounds() {
   camera.add(listener);
 
-  audioSetup(swoosh,'/assets/sounds/whoosh.mp3',0.3,loader)
-  audioSetup(boink,'/assets/sounds/boink.mp3',0.2,loader)
-  audioSetup(thud,'/assets/sounds/loud-thud-45719.mp3',0.5,loader)
+  audioSetup(swoosh,'../assets/sounds/whoosh.mp3',0.3,loader)
+  audioSetup(boink,'../assets/sounds/boink.mp3',0.2,loader)
+  audioSetup(thud,'../assets/sounds/loud-thud-45719.mp3',0.5,loader)
 }
 
 function audioSetup(sound:THREE.Audio, url:string,volume:number,loader:THREE.AudioLoader){
