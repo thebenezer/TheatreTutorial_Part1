@@ -1,6 +1,7 @@
 import './style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import {CSS2DRenderer,CSS2DObject} from 'three/examples/jsm/renderers/CSS2DRenderer'
 
 import { getProject, onChange, types, val } from '@theatre/core';
 import projectState from './TheatreTutorial_1.theatre-project-state.json';
@@ -23,7 +24,10 @@ const sheet = project.sheet('AnimationScene');
 let controls: OrbitControls;
 let camera: THREE.PerspectiveCamera;
 let renderer: THREE.WebGLRenderer;
+let textRenderer:CSS2DRenderer;
 let scene: THREE.Scene;
+
+
 const listener = new THREE.AudioListener();
 const loader = new THREE.AudioLoader();
 let soundReady = false;
@@ -49,6 +53,13 @@ function init() {
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x292929);
 
+  // TextRenderer
+  textRenderer = new CSS2DRenderer();
+  textRenderer.setSize(window.innerWidth,window.innerHeight);
+  textRenderer.domElement.style.position = 'absolute';
+  textRenderer.domElement.style.top = "0";
+  document.body.appendChild(textRenderer.domElement)
+
   // Renderer
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.shadowMap.enabled = true;
@@ -60,7 +71,6 @@ function init() {
   document.body.appendChild(renderer.domElement);
 
   // Fog
-
   scene.fog = new THREE.FogExp2(0x292929, 0.007);
 
   setupLights();
@@ -79,6 +89,7 @@ function init() {
   box.receiveShadow = true;
   scene.add(box);
 
+  // Floor
   const floorGeometry = new THREE.CylinderGeometry(30, 30, 300, 30);
   const floorMaterial = new THREE.MeshPhongMaterial({ color: 0xf0f0f0 });
 
@@ -87,7 +98,36 @@ function init() {
   floor.receiveShadow = true;
   scene.add(floor);
 
-  // ***** Theatre Config *******
+  // Swoosh Effect Objects
+  const swooshMaterial = new THREE.MeshBasicMaterial({color:0x222222,transparent:true,opacity:1});
+
+  const swooshEffect = new THREE.Group();
+
+  const swooshBig = new THREE.Mesh(geometry, swooshMaterial );
+  swooshBig.scale.set(0.02,2,0.02)
+  swooshBig.position.set(1,0,-2)
+
+  const swooshSmall1 = new THREE.Mesh(geometry, swooshMaterial );
+  swooshSmall1.scale.set(0.02,1,0.02)
+  swooshSmall1.position.set(1,0,3)
+
+  const swooshSmall2 = new THREE.Mesh(geometry, swooshMaterial );
+  swooshSmall2.scale.set(0.02,1.4,0.02)
+  swooshSmall2.position.set(-3,0,0)
+
+  swooshEffect.add( swooshBig, swooshSmall1, swooshSmall2 );
+  swooshEffect.position.set(0,20,0)
+  scene.add(swooshEffect)
+
+  // Text Effects
+  const boinkDom = document.getElementById('boink');
+  // @ts-ignore
+  const boinkText = new CSS2DObject(boinkDom);
+  boinkText.position.set(-25,0,0)
+  box.add(boinkText);
+
+
+  // ***** THEATRE CONFIG OBJECTS *******
 
   const boxObj = sheet.object('Box', {
     rotation: types.compound({
@@ -114,7 +154,23 @@ function init() {
   })
 
   const boxEffectsObj = sheet.object('Effects',{
-    boxGlow:types.rgba()
+    boxGlow:types.rgba(),
+    swooshScale:types.number(1,{nudgeMultiplier:0.01}),
+    swooshPosition:types.number(0,{nudgeMultiplier:0.01}),
+    swooshOpacity:types.number(1,{nudgeMultiplier:0.01})
+  })
+
+  const textEffectObj = sheet.object('text',{
+    opacity:1,
+    text:"",
+    scale: 1
+  });
+
+  textEffectObj.onValuesChange((values)=>{
+    if(!boinkDom)return;
+    boinkDom.innerText = values.text;
+    boinkDom.style.opacity = ""+values.opacity
+    boinkDom.style.fontSize = ""+values.scale+"px";
   })
 
   boxObj.onValuesChange((values) => {
@@ -135,7 +191,10 @@ function init() {
   })
 
   boxEffectsObj.onValuesChange((values)=>{
-    boxMaterial.emissive.setRGB(values.boxGlow.r,values.boxGlow.g,values.boxGlow.b)
+    boxMaterial.emissive.setRGB(values.boxGlow.r,values.boxGlow.g,values.boxGlow.b);
+    swooshEffect.scale.setY(values.swooshScale);
+    swooshEffect.position.setY(values.swooshPosition);
+    swooshMaterial.opacity=values.swooshScale;
   })
 
   // play the audio based on pointer position
@@ -164,6 +223,7 @@ function init() {
 // RAF Update the screen
 function tick(): void {
   renderer.render(scene, camera);
+  textRenderer.render(scene, camera);
   controls.update();
   window.requestAnimationFrame(tick);
 }
@@ -235,21 +295,19 @@ function setupEventListeners() {
     false,
   );
   // Play sequence on click
-  window.addEventListener(
+  const tapStart = document.getElementById('tapStart');
+  // @ts-ignore
+  tapStart.addEventListener(
     'click',
     function () {
       soundReady = true;
-      const tapStart = document.getElementById('tapStart');
       // @ts-ignore
       tapStart.style.opacity = "0";
-      this.setTimeout(()=>{
+      setTimeout(()=>{
         // @ts-ignore
         tapStart.style.display = "none";
       },400)
       sheet.sequence.play({ iterationCount: Infinity, range: [0, 2] });
-    },
-    {
-      once:true
     }
   );
 
