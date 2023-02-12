@@ -4,20 +4,20 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import {CSS2DRenderer,CSS2DObject} from 'three/examples/jsm/renderers/CSS2DRenderer'
 
 import { getProject, onChange, types, val } from '@theatre/core';
-import projectState from './TheatreTutorial_1.theatre-project-state.json';
+import projectState from './assets/BoinkTheatreState.json';
 
-import studio from '@theatre/studio';
+// import studio from '@theatre/studio';
 
 let project;
-if (import.meta.env.DEV) {
-  studio.initialize();
-  // Create a project from local state
-  project = getProject('TheatreTutorial_1');
-}
-else {
+// if (import.meta.env.DEV) {
+//   studio.initialize();
+//   // Create a project from local state
+//   project = getProject('TheatreTutorial_1');
+// }
+// else {
   // Create a project from saved state
   project = getProject('TheatreTutorial_1', { state: projectState });
-}
+// }
 // Create a sheet
 const sheet = project.sheet('AnimationScene');
 
