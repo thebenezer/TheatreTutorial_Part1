@@ -5,6 +5,9 @@ import {CSS2DRenderer,CSS2DObject} from 'three/examples/jsm/renderers/CSS2DRende
 
 import { getProject, onChange, types, val } from '@theatre/core';
 import projectState from '../assets/BoinkTheatreState.json';
+import swooshSound from '../assets/sounds/whoosh.mp3';
+import boinkSound from '../assets/sounds/boink.mp3';
+import thudSound from '../assets/sounds/loud-thud-45719.mp3';
 
 // import studio from '@theatre/studio';
 
@@ -231,9 +234,9 @@ function tick(): void {
 function setupSounds() {
   camera.add(listener);
 
-  audioSetup(swoosh,'../assets/sounds/whoosh.mp3',0.3,loader)
-  audioSetup(boink,'../assets/sounds/boink.mp3',0.2,loader)
-  audioSetup(thud,'../assets/sounds/loud-thud-45719.mp3',0.5,loader)
+  audioSetup(swoosh,swooshSound,0.3,loader)
+  audioSetup(boink,boinkSound,0.2,loader)
+  audioSetup(thud,thudSound,0.5,loader)
 }
 
 function audioSetup(sound:THREE.Audio, url:string,volume:number,loader:THREE.AudioLoader){
@@ -291,6 +294,7 @@ function setupEventListeners() {
 
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      textRenderer.setSize(window.innerWidth, window.innerHeight);
     },
     false,
   );
