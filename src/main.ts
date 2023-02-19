@@ -9,11 +9,11 @@ import swooshSound from '../assets/sounds/whoosh.mp3';
 import boinkSound from '../assets/sounds/boink.mp3';
 import thudSound from '../assets/sounds/loud-thud-45719.mp3';
 
-// import studio from '@theatre/studio';
+import studio from '@theatre/studio';
 
 let project;
 // if (import.meta.env.DEV) {
-  // studio.initialize();
+  studio.initialize();
 //   // Create a project from local state
 //   project = getProject('TheatreTutorial_1');
 // }
@@ -61,6 +61,9 @@ function init() {
   textRenderer.setSize(window.innerWidth,window.innerHeight);
   textRenderer.domElement.style.position = 'absolute';
   textRenderer.domElement.style.top = "0";
+  textRenderer.domElement.style.left = "0";
+  textRenderer.domElement.style.width = "100%";
+  textRenderer.domElement.style.height = "100%";
   textRenderer.domElement.style.zIndex = "2";
   document.body.appendChild(textRenderer.domElement)
 
@@ -70,16 +73,20 @@ function init() {
   renderer.shadowMap.autoUpdate = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputEncoding = THREE.sRGBEncoding;
-  renderer.toneMapping = THREE.LinearToneMapping
+  renderer.toneMapping = THREE.LinearToneMapping;
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.render(scene, camera);
   renderer.domElement.style.zIndex="1";
+  renderer.domElement.style.top = "0";
+  renderer.domElement.style.left = "0";
+  renderer.domElement.style.width = "100%";
+  renderer.domElement.style.height = "100%";
   renderer.domElement.style.position="absolute";
   document.body.appendChild(renderer.domElement);
 
   // Fog
-  scene.fog = new THREE.FogExp2(0x292929, 0.007);
+  scene.fog = new THREE.FogExp2(0x94acb0, 0.009);
 
   setupLights();
   setupOrbitControls();
@@ -262,6 +269,8 @@ function audioSetup(sound:THREE.Audio, url:string,volume:number,loader:THREE.Aud
 function setupLights() {
   // ***** Lights ****** //
   const ambLight = new THREE.AmbientLight(0xfefefe, 0.1);
+  const rectLight = new THREE.DirectionalLight(0x00fff0, 0.6);
+  rectLight.position.set(20, 30, -20);
   const dirLight = new THREE.DirectionalLight(0xfefefe, 1.5);
   dirLight.castShadow = true;
   dirLight.shadow.mapSize.width = 1024;
@@ -274,7 +283,7 @@ function setupLights() {
   dirLight.shadow.camera.left = -40;
 
   dirLight.position.set(20, 30, 20);
-  scene.add(ambLight, dirLight);
+  scene.add(ambLight, dirLight,rectLight);
 }
 
 function setupOrbitControls() {
@@ -285,11 +294,12 @@ function setupOrbitControls() {
   controls.enableDamping = true;
   controls.autoRotate = false;
   controls.rotateSpeed = 1;
-  controls.dampingFactor = 0.5;
-  controls.minDistance = 2.4;
-  controls.maxDistance = 180;
+  controls.dampingFactor = 0.08;
+  controls.minDistance = 30;
+  controls.maxDistance = 120;
   controls.target.set(0, 20, 0);
-  controls.maxPolarAngle = (Math.PI / 2);
+  controls.maxPolarAngle = 4*(Math.PI / 7);
+  controls.minPolarAngle = 1*(Math.PI / 7);
 }
 
 function setupEventListeners() {
