@@ -13,7 +13,7 @@ import thudSound from '../assets/sounds/loud-thud-45719.mp3';
 
 let project;
 // if (import.meta.env.DEV) {
-//   studio.initialize();
+  // studio.initialize();
 //   // Create a project from local state
 //   project = getProject('TheatreTutorial_1');
 // }
@@ -54,23 +54,26 @@ function init() {
 
   // Scene
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x292929);
+  // scene.background = new THREE.Color(0x292929);
 
   // TextRenderer
   textRenderer = new CSS2DRenderer();
   textRenderer.setSize(window.innerWidth,window.innerHeight);
   textRenderer.domElement.style.position = 'absolute';
   textRenderer.domElement.style.top = "0";
+  textRenderer.domElement.style.zIndex = "2";
   document.body.appendChild(textRenderer.domElement)
 
   // Renderer
-  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer = new THREE.WebGLRenderer({ antialias: true,alpha:true });
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.autoUpdate = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.render(scene, camera);
+  renderer.domElement.style.zIndex="1";
+  renderer.domElement.style.position="absolute";
   document.body.appendChild(renderer.domElement);
 
   // Fog
@@ -186,9 +189,10 @@ function init() {
   });
 
   colorObj.onValuesChange((values)=>{
-    scene.background = new THREE.Color(values.backgroundColor.toString());
+    // scene.background = new THREE.Color(values.backgroundColor.toString());
     // @ts-ignore
-    scene.fog.color = new THREE.Color(values.backgroundColor.toString());
+    // scene.fog.color = new THREE.Color(values.backgroundColor.toString());
+    document.body.style.backgroundColor = values.backgroundColor;
     floorMaterial.color.setRGB(values.floorColor.r,values.floorColor.g,values.floorColor.b)
     boxMaterial.color.setRGB(values.boxColor.r,values.boxColor.g,values.boxColor.b)
   })
@@ -272,8 +276,9 @@ function setupLights() {
 
 function setupOrbitControls() {
   // OrbitControls
-  controls = new OrbitControls(camera, renderer.domElement);
+  controls = new OrbitControls(camera, textRenderer.domElement);
   controls.enableZoom = true;
+  controls.enableRotate = true;
   controls.enableDamping = true;
   controls.autoRotate = false;
   controls.rotateSpeed = 1;

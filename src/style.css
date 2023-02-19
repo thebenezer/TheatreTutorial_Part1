@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Sonsie+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Poppins:ital,wght@0,300;1,500&display=swap');
 @font-face {
   font-family: 'Sassy Frass';
   src: url('../assets/fonts/Sassy_Frass/SassyFrass-Regular.ttf');
@@ -12,7 +14,7 @@
 html,
 body {
   overflow: hidden;
-  font-family: 'Sassy Frass', cursive;
+  font-family: 'Sonsie One', cursive;
   /* background-color: #0e0e0e; */
   overflow: hidden;
 }
@@ -27,32 +29,45 @@ body {
 }
 
 .logo{
-  z-index: 2;
+  z-index: 0;
   color: rgb(218, 242, 214);
   position: absolute;
-  top: 5px;
+  top: 50%;
   left: 50%;
-  font-size: 5rem;
+  font-size: 20vw;
   padding: none;
-  transform: translateX(-50%);
-  stroke: #0e0e0e;
+  transform: translate(-50%,-50%);
+  /* stroke: #0e0e0e;
   -webkit-text-stroke-width: 0.001rem;
-  -webkit-text-stroke-color: #0e0e0e;
+  -webkit-text-stroke-color: #0e0e0e; */
+}
+.name{
+  font-family: 'Poppins', sans-serif;
+  position: absolute;
+  top: 39px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 0;
+  font-size: 14px;
+  opacity: 0.7;
 }
 .cta{
-  /* font-family:serif; */
-  z-index: 1;
-  font-size: 30px;
+  font-family: 'Poppins', sans-serif;
+  z-index: 3;
+  font-size: 12px;
+  text-transform: uppercase;
   position: absolute;
   top: 30px;
   right: 40px;
   text-decoration: none;
   color: #0e0e0e;
-  background-color: rgb(228, 228, 228);
-  padding: 3px 20px;
+  background-color: rgba(255, 255, 255, 0.709);
+  padding: 5px 25px;
   border: 1px solid #0e0e0e;
   border-radius: 2px;
   transition: all 0.3s ease;
+  border-radius: 50px;
+  /* letter-spacing: -1px; */
 }
 .cta:hover{
   background-color: #abcaa9;
@@ -62,10 +77,10 @@ body {
 .socials{
   position: absolute;
   top: 30px;
-  left: 20px;
+  left: 25px;
   display: flex;
   flex-direction: row;
-  z-index: 1;
+  z-index: 3;
 }
 .socials li{
   cursor: pointer;
@@ -74,7 +89,7 @@ body {
   border: 1px solid #0e0e0e;
   background-color: rgb(228, 228, 228);
   padding: 4px 5px 0px 5px;
-  margin: 0 20px;
+  margin: 0 5px;
   border-radius: 50%;
   transition: all 0.3s ease;
 }
@@ -86,7 +101,8 @@ body {
   height: 20px;
 }
 .enterSceneContainer{
-  z-index: 1;
+  font-family: 'Poppins', sans-serif;
+  z-index: 3;
   position: absolute;
   display: block;
   width: 100%;
@@ -100,12 +116,16 @@ body {
 .enterSceneContainer p{
   cursor: pointer;
   margin: 50vh auto;
-  background-color: #0e0e0e72;
+  background-color: #ffffff;
   padding: 20px 40px;
-  width: 200px;
-  border-radius: 2px;
-  color: rgb(228, 228, 228);
-  border: 1px solid rgb(228, 228, 228);
+  width: 300px;
+  border-radius: 50px;
+  color: #abcaa9;
+  transition: all 0.3s ease-in-out;
+}
+.enterSceneContainer p:hover{
+  background-color: #abcaa9;
+  color: #ffffff;
 }
 .playbackControls{
   z-index: 1;
@@ -137,12 +157,11 @@ button img{
 }
 
 #boink{
+  font-family: 'Kaushan Script', cursive;
   position: absolute;
-  background-color: #fefefe;
+  color: #fefefe;
   padding: 2px 10px;
   font-size: 20px;
-  border-radius: 1px;
-  border: 5px double #0e0e0e;
   transform: scale(2);
 }
 @media screen and (max-width:800px) {
