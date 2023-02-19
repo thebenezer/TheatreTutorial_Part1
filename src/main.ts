@@ -69,6 +69,8 @@ function init() {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.autoUpdate = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.LinearToneMapping
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.render(scene, camera);
@@ -191,7 +193,8 @@ function init() {
   colorObj.onValuesChange((values)=>{
     // scene.background = new THREE.Color(values.backgroundColor.toString());
     // @ts-ignore
-    // scene.fog.color = new THREE.Color(values.backgroundColor.toString());
+    scene.fog.color = new THREE.Color(values.backgroundColor.toString());
+    // @ts-ignore
     document.body.style.backgroundColor = values.backgroundColor;
     floorMaterial.color.setRGB(values.floorColor.r,values.floorColor.g,values.floorColor.b)
     boxMaterial.color.setRGB(values.boxColor.r,values.boxColor.g,values.boxColor.b)
@@ -258,8 +261,8 @@ function audioSetup(sound:THREE.Audio, url:string,volume:number,loader:THREE.Aud
 
 function setupLights() {
   // ***** Lights ****** //
-  const ambLight = new THREE.AmbientLight(0xfefefe, 0.5);
-  const dirLight = new THREE.DirectionalLight(0xfefefe, 1);
+  const ambLight = new THREE.AmbientLight(0xfefefe, 0.1);
+  const dirLight = new THREE.DirectionalLight(0xfefefe, 1.5);
   dirLight.castShadow = true;
   dirLight.shadow.mapSize.width = 1024;
   dirLight.shadow.mapSize.height = 1024;
@@ -282,7 +285,7 @@ function setupOrbitControls() {
   controls.enableDamping = true;
   controls.autoRotate = false;
   controls.rotateSpeed = 1;
-  controls.dampingFactor = 0.1;
+  controls.dampingFactor = 0.5;
   controls.minDistance = 2.4;
   controls.maxDistance = 180;
   controls.target.set(0, 20, 0);
