@@ -4,20 +4,24 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import {CSS2DRenderer,CSS2DObject} from 'three/examples/jsm/renderers/CSS2DRenderer'
 
 import { getProject, onChange, types, val } from '@theatre/core';
-import projectState from './assets/BoinkTheatreState.json';
+import projectState from '../assets/BoinkTheatreState.json';
+import swooshSound from '../assets/sounds/whoosh.mp3';
+import boinkSound from '../assets/sounds/boink.mp3';
+import thudSound from '../assets/sounds/loud-thud-45719.mp3';
 
-// import studio from '@theatre/studio';
+import studio from '@theatre/studio';
 
 let project;
-// if (import.meta.env.DEV) {
-//   studio.initialize();
-//   // Create a project from local state
-//   project = getProject('TheatreTutorial_1');
-// }
-// else {
+if (import.meta.env.DEV) {
+  studio.initialize();
+  // Create a project from local state
+  project = getProject('TheatreTutorial_1');
+}
+else {
   // Create a project from saved state
   project = getProject('TheatreTutorial_1', { state: projectState });
-// }
+}
+
 // Create a sheet
 const sheet = project.sheet('AnimationScene');
 
@@ -26,10 +30,39 @@ let camera: THREE.PerspectiveCamera;
 let renderer: THREE.WebGLRenderer;
 let textRenderer:CSS2DRenderer;
 let scene: THREE.Scene;
+const loadingMgr = new THREE.LoadingManager(
+  //onLoad
+  (()=>{
+    // Play sequence on click once all assets are loaded
+    const tapStart = document.getElementById('tapStart');
+    // @ts-ignore
+    tapStart.addEventListener(
+      'click',
+      function () {
+        soundReady = true;
+        // @ts-ignore
+        tapStart.style.opacity = "0";
+        setTimeout(()=>{
+          // @ts-ignore
+          tapStart.style.display = "none";
+        },400)
+        sheet.sequence.play({ iterationCount: Infinity, range: [0, 2] });
+      }
+    );
+  }),
+  //onProgress
+  ((url: string, loaded: number, total: number)=>{
+    console.log(url,loaded,total)
+  }),
+  //onError
+  ((url:string)=>{
+    console.log(url)
+  })
+)
 
 
 const listener = new THREE.AudioListener();
-const loader = new THREE.AudioLoader();
+const loader = new THREE.AudioLoader(loadingMgr);
 let soundReady = false;
 
 const swoosh = new THREE.Audio(listener)
@@ -51,27 +84,39 @@ function init() {
 
   // Scene
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x292929);
+  // scene.background = new THREE.Color(0x292929);
 
   // TextRenderer
   textRenderer = new CSS2DRenderer();
   textRenderer.setSize(window.innerWidth,window.innerHeight);
   textRenderer.domElement.style.position = 'absolute';
   textRenderer.domElement.style.top = "0";
+  textRenderer.domElement.style.left = "0";
+  textRenderer.domElement.style.width = "100%";
+  textRenderer.domElement.style.height = "100%";
+  textRenderer.domElement.style.zIndex = "2";
   document.body.appendChild(textRenderer.domElement)
 
   // Renderer
-  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer = new THREE.WebGLRenderer({ antialias: true,alpha:true });
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.autoUpdate = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.LinearToneMapping;
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.render(scene, camera);
+  renderer.domElement.style.zIndex="1";
+  renderer.domElement.style.top = "0";
+  renderer.domElement.style.left = "0";
+  renderer.domElement.style.width = "100%";
+  renderer.domElement.style.height = "100%";
+  renderer.domElement.style.position="absolute";
   document.body.appendChild(renderer.domElement);
 
   // Fog
-  scene.fog = new THREE.FogExp2(0x292929, 0.007);
+  scene.fog = new THREE.FogExp2(0x94acb0, 0.009);
 
   setupLights();
   setupOrbitControls();
@@ -183,9 +228,11 @@ function init() {
   });
 
   colorObj.onValuesChange((values)=>{
-    scene.background = new THREE.Color(values.backgroundColor.toString());
+    // scene.background = new THREE.Color(values.backgroundColor.toString());
     // @ts-ignore
     scene.fog.color = new THREE.Color(values.backgroundColor.toString());
+    // @ts-ignore
+    document.body.style.backgroundColor = values.backgroundColor;
     floorMaterial.color.setRGB(values.floorColor.r,values.floorColor.g,values.floorColor.b)
     boxMaterial.color.setRGB(values.boxColor.r,values.boxColor.g,values.boxColor.b)
   })
@@ -200,17 +247,17 @@ function init() {
   // play the audio based on pointer position
   onChange(sheet.sequence.pointer.position, (position) => {
     if(!soundReady)return;
-    if(position > 0.80 && position < 0.83){
+    if(position > 0.79 && position < 0.83){
       if(!thud.isPlaying){
         thud.play();
       }
     }
-    else if(position > 1.20 && position < 1.23){
+    else if(position > 1.18 && position < 1.23){
       if(!boink.isPlaying){
         boink.play();
       }
     }
-    else if(position > 0.00 && position<0.03){
+    else if(position > 0.00 && position<0.04){
       if(!swoosh.isPlaying){
         swoosh.playbackRate= 1.7;
         swoosh.play();
@@ -231,9 +278,9 @@ function tick(): void {
 function setupSounds() {
   camera.add(listener);
 
-  audioSetup(swoosh,'src/assets/sounds/little-whoosh-2-6301.mp3',1,loader)
-  audioSetup(boink,'src/assets/sounds/boink.mp3',0.2,loader)
-  audioSetup(thud,'src/assets/sounds/loud-thud-45719.mp3',0.5,loader)
+  audioSetup(swoosh,swooshSound,0.3,loader)
+  audioSetup(boink,boinkSound,0.2,loader)
+  audioSetup(thud,thudSound,0.5,loader)
 }
 
 function audioSetup(sound:THREE.Audio, url:string,volume:number,loader:THREE.AudioLoader){
@@ -251,8 +298,10 @@ function audioSetup(sound:THREE.Audio, url:string,volume:number,loader:THREE.Aud
 
 function setupLights() {
   // ***** Lights ****** //
-  const ambLight = new THREE.AmbientLight(0xfefefe, 0.5);
-  const dirLight = new THREE.DirectionalLight(0xfefefe, 1);
+  const ambLight = new THREE.AmbientLight(0xfefefe, 0.1);
+  const rectLight = new THREE.DirectionalLight(0x00fff0, 0.6);
+  rectLight.position.set(20, 30, -20);
+  const dirLight = new THREE.DirectionalLight(0xfefefe, 1.5);
   dirLight.castShadow = true;
   dirLight.shadow.mapSize.width = 1024;
   dirLight.shadow.mapSize.height = 1024;
@@ -264,21 +313,23 @@ function setupLights() {
   dirLight.shadow.camera.left = -40;
 
   dirLight.position.set(20, 30, 20);
-  scene.add(ambLight, dirLight);
+  scene.add(ambLight, dirLight,rectLight);
 }
 
 function setupOrbitControls() {
   // OrbitControls
-  controls = new OrbitControls(camera, renderer.domElement);
+  controls = new OrbitControls(camera, textRenderer.domElement);
   controls.enableZoom = true;
+  controls.enableRotate = true;
   controls.enableDamping = true;
   controls.autoRotate = false;
   controls.rotateSpeed = 1;
-  controls.dampingFactor = 0.1;
-  controls.minDistance = 2.4;
-  controls.maxDistance = 180;
+  controls.dampingFactor = 0.08;
+  controls.minDistance = 30;
+  controls.maxDistance = 120;
   controls.target.set(0, 20, 0);
-  controls.maxPolarAngle = (Math.PI / 2);
+  controls.maxPolarAngle = 4*(Math.PI / 7);
+  controls.minPolarAngle = 1*(Math.PI / 7);
 }
 
 function setupEventListeners() {
@@ -291,25 +342,11 @@ function setupEventListeners() {
 
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      textRenderer.setSize(window.innerWidth, window.innerHeight);
     },
     false,
   );
-  // Play sequence on click
-  const tapStart = document.getElementById('tapStart');
-  // @ts-ignore
-  tapStart.addEventListener(
-    'click',
-    function () {
-      soundReady = true;
-      // @ts-ignore
-      tapStart.style.opacity = "0";
-      setTimeout(()=>{
-        // @ts-ignore
-        tapStart.style.display = "none";
-      },400)
-      sheet.sequence.play({ iterationCount: Infinity, range: [0, 2] });
-    }
-  );
+  
 
   const toggleSoundDom = document.getElementById('toggleSound');
   // @ts-ignore

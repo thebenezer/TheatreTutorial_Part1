@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Sonsie+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Poppins:ital,wght@0,300;1,500&display=swap');
 @font-face {
   font-family: 'Sassy Frass';
-  src: url('/src/assets/fonts/Sassy_Frass/SassyFrass-Regular.ttf');
+  src: url('../assets/fonts/Sassy_Frass/SassyFrass-Regular.ttf');
 }
 
 * {
@@ -12,9 +14,8 @@
 html,
 body {
   overflow: hidden;
-  font-family: 'Sassy Frass', cursive;
-  /* background-color: #0e0e0e; */
-  overflow: hidden;
+  font-family: 'Sonsie One', cursive;
+  background-color: #94acb0;
 }
 
 #webgl-canvas {
@@ -27,32 +28,46 @@ body {
 }
 
 .logo{
-  z-index: 2;
+  z-index: 0;
   color: rgb(218, 242, 214);
   position: absolute;
-  top: 5px;
+  top: 50%;
   left: 50%;
-  font-size: 5rem;
+  font-size: 20vw;
   padding: none;
-  transform: translateX(-50%);
-  stroke: #0e0e0e;
+  transform: translate(-50%,-50%);
+  overflow: hidden;
+  /* stroke: #0e0e0e;
   -webkit-text-stroke-width: 0.001rem;
-  -webkit-text-stroke-color: #0e0e0e;
+  -webkit-text-stroke-color: #0e0e0e; */
+}
+.name{
+  font-family: 'Poppins', sans-serif;
+  position: absolute;
+  top: 39px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  font-size: 14px;
+  opacity: 0.7;
 }
 .cta{
-  /* font-family:serif; */
-  z-index: 1;
-  font-size: 30px;
+  font-family: 'Poppins', sans-serif;
+  z-index: 3;
+  font-size: 12px;
+  text-transform: uppercase;
   position: absolute;
   top: 30px;
   right: 40px;
   text-decoration: none;
   color: #0e0e0e;
-  background-color: rgb(228, 228, 228);
-  padding: 3px 20px;
+  background-color: #ffffffb5;
+  padding: 5px 25px;
   border: 1px solid #0e0e0e;
   border-radius: 2px;
   transition: all 0.3s ease;
+  border-radius: 50px;
+  /* letter-spacing: -1px; */
 }
 .cta:hover{
   background-color: #abcaa9;
@@ -62,19 +77,19 @@ body {
 .socials{
   position: absolute;
   top: 30px;
-  left: 20px;
+  left: 25px;
   display: flex;
   flex-direction: row;
-  z-index: 1;
+  z-index: 3;
 }
 .socials li{
   cursor: pointer;
   color: #0e0e0e;
   list-style: none;
   border: 1px solid #0e0e0e;
-  background-color: rgb(228, 228, 228);
+  background-color: #ffffffb5;
   padding: 4px 5px 0px 5px;
-  margin: 0 20px;
+  margin: 0 10px;
   border-radius: 50%;
   transition: all 0.3s ease;
 }
@@ -86,7 +101,8 @@ body {
   height: 20px;
 }
 .enterSceneContainer{
-  z-index: 1;
+  font-family: 'Poppins', sans-serif;
+  z-index: 4;
   position: absolute;
   display: block;
   width: 100%;
@@ -100,15 +116,19 @@ body {
 .enterSceneContainer p{
   cursor: pointer;
   margin: 50vh auto;
-  background-color: #0e0e0e72;
+  background-color: #ffffff;
   padding: 20px 40px;
-  width: 200px;
-  border-radius: 2px;
-  color: rgb(228, 228, 228);
-  border: 1px solid rgb(228, 228, 228);
+  width: 300px;
+  border-radius: 50px;
+  color: #abcaa9;
+  transition: all 0.3s ease-in-out;
+}
+.enterSceneContainer p:hover{
+  background-color: #abcaa9;
+  color: #ffffff;
 }
 .playbackControls{
-  z-index: 1;
+  z-index: 3;
   position: absolute;
   bottom: 30px;
   left: 50%;
@@ -137,34 +157,46 @@ button img{
 }
 
 #boink{
+  font-family: 'Kaushan Script', cursive;
   position: absolute;
-  background-color: #fefefe;
+  color: #fefefe;
   padding: 2px 10px;
   font-size: 20px;
-  border-radius: 1px;
-  border: 5px double #0e0e0e;
   transform: scale(2);
 }
+.vignette{
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  background: radial-gradient(circle, rgba(255,255,255,0) 31%, rgb(6 140 120 / 43%) 99%);
+  z-index: 2;
+}
 @media screen and (max-width:800px) {
-  .logo{
-    top: 5px;
-    left: 30px;
-    font-size: 60px;
-    transform: translateX(0%);
-  }
+
   .cta{
-    top: 23px;
-    right: 30px;
+    top: 20px;
+    right: 20px;
+  }
+  .name{
+    position: absolute;
+    top: auto;
+    bottom: 20px;
+    left: 0;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+    transform: translateX(0);
+    font-size: 10px;
+    opacity: 0.7;
   }
   .socials{
-    top: auto;
-    bottom: 10px;
-    left: 23px;
-    flex-direction: column;
-    justify-content: space-around;
+    top: 20px;
+    left: 20px;
   }
   .socials li{
-    margin: 20px 0px;
+    padding: 4px 2px -1px 2px;
+    margin: 0;
+    margin-right: 10px;
     border-radius: 50%;
     transition: all 0.3s ease;
   }
