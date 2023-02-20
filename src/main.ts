@@ -9,18 +9,19 @@ import swooshSound from '../assets/sounds/whoosh.mp3';
 import boinkSound from '../assets/sounds/boink.mp3';
 import thudSound from '../assets/sounds/loud-thud-45719.mp3';
 
-// import studio from '@theatre/studio';
+import studio from '@theatre/studio';
 
 let project;
-// if (import.meta.env.DEV) {
-  // studio.initialize();
-//   // Create a project from local state
-//   project = getProject('TheatreTutorial_1');
-// }
-// else {
+if (import.meta.env.DEV) {
+  studio.initialize();
+  // Create a project from local state
+  project = getProject('TheatreTutorial_1');
+}
+else {
   // Create a project from saved state
   project = getProject('TheatreTutorial_1', { state: projectState });
-// }
+}
+
 // Create a sheet
 const sheet = project.sheet('AnimationScene');
 
@@ -29,10 +30,39 @@ let camera: THREE.PerspectiveCamera;
 let renderer: THREE.WebGLRenderer;
 let textRenderer:CSS2DRenderer;
 let scene: THREE.Scene;
+const loadingMgr = new THREE.LoadingManager(
+  //onLoad
+  (()=>{
+    // Play sequence on click once all assets are loaded
+    const tapStart = document.getElementById('tapStart');
+    // @ts-ignore
+    tapStart.addEventListener(
+      'click',
+      function () {
+        soundReady = true;
+        // @ts-ignore
+        tapStart.style.opacity = "0";
+        setTimeout(()=>{
+          // @ts-ignore
+          tapStart.style.display = "none";
+        },400)
+        sheet.sequence.play({ iterationCount: Infinity, range: [0, 2] });
+      }
+    );
+  }),
+  //onProgress
+  ((url: string, loaded: number, total: number)=>{
+    console.log(url,loaded,total)
+  }),
+  //onError
+  ((url:string)=>{
+    console.log(url)
+  })
+)
 
 
 const listener = new THREE.AudioListener();
-const loader = new THREE.AudioLoader();
+const loader = new THREE.AudioLoader(loadingMgr);
 let soundReady = false;
 
 const swoosh = new THREE.Audio(listener)
@@ -316,22 +346,7 @@ function setupEventListeners() {
     },
     false,
   );
-  // Play sequence on click
-  const tapStart = document.getElementById('tapStart');
-  // @ts-ignore
-  tapStart.addEventListener(
-    'click',
-    function () {
-      soundReady = true;
-      // @ts-ignore
-      tapStart.style.opacity = "0";
-      setTimeout(()=>{
-        // @ts-ignore
-        tapStart.style.display = "none";
-      },400)
-      sheet.sequence.play({ iterationCount: Infinity, range: [0, 2] });
-    }
-  );
+  
 
   const toggleSoundDom = document.getElementById('toggleSound');
   // @ts-ignore
