@@ -9,11 +9,11 @@ import swooshSound from '../assets/sounds/whoosh.mp3';
 import boinkSound from '../assets/sounds/boink.mp3';
 import thudSound from '../assets/sounds/loud-thud-45719.mp3';
 
-import studio from '@theatre/studio';
+// import studio from '@theatre/studio';
 
 let project;
 // if (import.meta.env.DEV) {
-  studio.initialize();
+  // studio.initialize();
 //   // Create a project from local state
 //   project = getProject('TheatreTutorial_1');
 // }

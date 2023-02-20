@@ -15,7 +15,7 @@ html,
 body {
   overflow: hidden;
   font-family: 'Sonsie One', cursive;
-  /* background-color: #94acb0; */
+  background-color: #94acb0;
 }
 
 #webgl-canvas {
@@ -36,6 +36,7 @@ body {
   font-size: 20vw;
   padding: none;
   transform: translate(-50%,-50%);
+  overflow: hidden;
   /* stroke: #0e0e0e;
   -webkit-text-stroke-width: 0.001rem;
   -webkit-text-stroke-color: #0e0e0e; */
