@@ -1,6 +1,6 @@
 # TheatreTutorial_Part1
-Youtube: Theatre.js tutorial
-
+Youtube: Theatre.js tutorial.
+Check out the project here : https://bouncy.vercel.app/
 
 ## Setup
 Download [Node.js](https://nodejs.org/en/download/).
