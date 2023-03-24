@@ -1,15 +1,16 @@
-# TheatreTutorial_Part1
-Theatre.js Beginner Tutorial
+# Theatre.js Beginner Tutorial
 
 In this tutorial we will learn how to animate a bouncy cube using theatre.js and three.js
 
-![Image Title](https://generative-placeholders.glitch.me/image?width=800&height=600")
-
-[Live Demo](http://tympanus.net/Development/.../)
+[Live Demo](https://bouncy.vercel.app/)
 
 [Article on Codrops](https://tympanus.net/codrops/?p=)
 
-[Youtube Video](http://tympanus.net/Development/.../)
+[Youtube Video](https://youtu.be/wT7P6qjAg30)
+=======
+Youtube: Theatre.js tutorial.
+Check out the project here : https://bouncy.vercel.app/
+
 
 ## Setup
 Download [Node.js](https://nodejs.org/en/download/).
