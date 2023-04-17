@@ -6,7 +6,7 @@ In this tutorial we will learn how to animate a bouncy cube using theatre.js and
 
 [Live Demo](https://bouncy.vercel.app/)
 
-[Article on Codrops](https://tympanus.net/codrops/?p=)
+[Article on Codrops](https://tympanus.net/codrops/2023/03/30/mastering-theatre-js-animations-learn-to-create-dynamic-visuals/)
 
 [Youtube Video](https://youtu.be/wT7P6qjAg30)
 
